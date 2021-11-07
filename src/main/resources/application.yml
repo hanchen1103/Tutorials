@@ -15,4 +15,9 @@ mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   type-aliases-package: com.demo.newproject.model
 
+file:
+  path: /Users/hanchenzhu/Pictures/img/
+  url: 127.0.0.1
+  port: 8080
+  suffix: /image/
 

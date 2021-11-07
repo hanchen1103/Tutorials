@@ -2,12 +2,18 @@ package com.demo.newproject.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.security.MessageDigest;
+
 
 public class newProjectUtil {
 
+
     private static final Logger logger = LoggerFactory.getLogger(newProjectUtil.class);
+
+    private static final String[] suffixNameTable = {"jpg", "bmp", "jpeg", "webbp", "pcx", "tif", "gif",
+            "tga", "exif", "fpx", "svg", "psd", "cdr", "pcd", "dxf", "ufo", "eps", "ai",
+    "png", "hdri", "raw", "wmf", "flic", "emf", "ico"};
+
 
     public static String MD5(String key) {
         char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -30,4 +36,18 @@ public class newProjectUtil {
             return null;
         }
     }
+
+    public static boolean isPic(String suffixName) {
+        if(suffixName == null || suffixName.isBlank()) {
+            return false;
+        }
+        String target  = suffixName.toLowerCase().split("\\.")[1];
+        for(String i : suffixNameTable) {
+            if(target.equals(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
