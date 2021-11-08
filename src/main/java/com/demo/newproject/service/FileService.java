@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -31,6 +32,7 @@ public class FileService {
     @Autowired
     UserService userService;
 
+    @Transactional(rollbackFor = Exception.class)
     public int uploadFile(MultipartFile multipartFile, Integer userId) throws IOException {
         if(multipartFile.isEmpty()) {
             throw new FileNotFoundException();
