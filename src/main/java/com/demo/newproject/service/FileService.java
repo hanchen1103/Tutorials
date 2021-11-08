@@ -34,7 +34,7 @@ public class FileService {
 
     @Transactional(rollbackFor = Exception.class)
     public int uploadFile(MultipartFile multipartFile, Integer userId) throws IOException {
-        if(multipartFile.isEmpty()) {
+        if(multipartFile == null || multipartFile.isEmpty()) {
             throw new FileNotFoundException();
         }
         String fileName = multipartFile.getOriginalFilename();
