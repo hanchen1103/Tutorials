@@ -66,4 +66,8 @@ public class UserService {
         }
         return userDAO.updateHead_url(head_url, id);
     }
+
+    public User selectById(int id) {
+        return userDAO.selectByuserId(id);
+    }
 }
