@@ -44,8 +44,8 @@ public class LoginController {
 
     @PostMapping(value = "/upload", produces = {"application/json;charset=UTF-8"})
     public String uploadRegister(HttpServletRequest httpServletRequest) {
-        MultipartFile file = ((MultipartHttpServletRequest) httpServletRequest).getFiles("file").get(0);
         try {
+            MultipartFile file = ((MultipartHttpServletRequest) httpServletRequest).getFiles("file").get(0);
             fileService.uploadFile(file, Integer.parseInt(httpServletRequest.getParameter("userId")));
         } catch (IOException ioException) {
             logger.error("file upload error");

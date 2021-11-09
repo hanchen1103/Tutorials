@@ -11,6 +11,11 @@ spring:
       max-request-size: 5000MB
       enabled: true
 
+  jackson:
+    default-property-inclusion: ALWAYS
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   type-aliases-package: com.demo.newproject.model

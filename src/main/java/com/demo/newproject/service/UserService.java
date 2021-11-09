@@ -56,7 +56,7 @@ public class UserService {
             map.put("msg", "密码错误");
             return map;
         }
-        map.put("ok", "login success");
+        map.put("user", user);
         return map;
     }
 
