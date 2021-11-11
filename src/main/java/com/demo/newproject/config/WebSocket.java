@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint(value = "/websocket", configurator = SpringConfigurator.class)
+@ServerEndpoint(value = "/websocket")
 @Component
 public class WebSocket {
 
@@ -37,7 +37,6 @@ public class WebSocket {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-
         logger.info("the message from client: " + message);
         for(WebSocket ws : webSocketSet) {
             try {

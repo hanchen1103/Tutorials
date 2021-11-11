@@ -41,7 +41,7 @@ public class HotQueueController {
             hotqueue.setStatus(0);
             hotqueue.setCreateDate(new Date());
             hotqueue.setContent(jsonMap.get("content"));
-            hotqueue.setTag(jsonMap.get("tag"));
+            hotqueue.setTag(jsonMap.get("tags"));
             hotqueue.setUserId(Integer.parseInt(jsonMap.get("userId")));
             hotqueue.setTitle(jsonMap.get("title"));
             hotQueueService.publishHotQueue(hotqueue);
