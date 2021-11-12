@@ -1,2 +1,0 @@
-This maybe your first spring project
-everyone should upload your project to this 'spring-demo' branch.
