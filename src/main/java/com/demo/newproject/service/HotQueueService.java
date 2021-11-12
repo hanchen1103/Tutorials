@@ -29,9 +29,14 @@ public class HotQueueService {
         return hotQueueDAO.addHotQueue(hotQueue);
     }
 
-    public List<HotQueue> getHotQueueByOffset(int page, int offset) {
+    public List<HotQueue> getHotQueueByOffset(Integer page, Integer offset) throws IllegalAccessException {
+        if(page == null || offset == null) {
+            throw new NullPointerException("page or offset can't be null");
+        }
         page -= 1;
-        if(page < 0) return null;
+        if(page < 0) {
+            throw new IllegalAccessException("page is illegal");
+        }
         return hotQueueDAO.selectByPage(page, offset);
     }
 

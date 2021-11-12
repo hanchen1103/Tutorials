@@ -4,6 +4,8 @@ import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.jsonUtil;
+import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,20 @@ public class HotQueueController {
     @Autowired
     UserService userService;
 
+    public static final RateLimiter rateLimiter = RateLimiter.create(3);
+
+
     @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
-    public String getHotQueue(int page, int offset) {
+    public String getHotQueue(Integer page, Integer offset) {
         try {
+            rateLimiter.acquire(5);
             return jsonUtil.getJSONString(200, hotQueueService.getHotQueueByOffset(page, offset));
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
-            return jsonUtil.getJSONString(500, "find error");
+            return jsonUtil.getJSONString(500, "page is illegal");
+        } catch (NullPointerException ex) {
+            logger.error(ex.getMessage());
+            return jsonUtil.getJSONString(500, "page or offset can't be null");
         }
     }
 
