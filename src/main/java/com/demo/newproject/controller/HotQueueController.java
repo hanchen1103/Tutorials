@@ -26,14 +26,18 @@ public class HotQueueController {
     @Autowired
     UserService userService;
 
-    public static final RateLimiter rateLimiter = RateLimiter.create(3);
+    public static final RateLimiter rateLimiter = RateLimiter.create(100);
 
 
     @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
     public String getHotQueue(Integer page, Integer offset) {
         try {
-            rateLimiter.acquire(5);
-            return jsonUtil.getJSONString(200, hotQueueService.getHotQueueByOffset(page, offset));
+            if(rateLimiter.tryAcquire(10)) {
+                String res = jsonUtil.getJSONString(200, hotQueueService.getHotQueueByOffset(page, offset));
+                logger.info(res);
+                return res;
+            }
+            logger.info("requests has been limited");
         } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
             return jsonUtil.getJSONString(500, "page is illegal");
@@ -41,6 +45,7 @@ public class HotQueueController {
             logger.error(ex.getMessage());
             return jsonUtil.getJSONString(500, "page or offset can't be null");
         }
+        return jsonUtil.getJSONString(500, "error");
     }
 
     @PostMapping(value = "", produces = {"application/json;charset=UTF-8"})
