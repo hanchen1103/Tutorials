@@ -12,7 +12,7 @@ import java.util.List;
 public interface HotQueueDAO {
 
     String TABLE_NAME = " hotqueue ";
-    String INSERT_NAME = " content, title, create_date, status, userId, tag ";
+    String INSERT_NAME = " content, title, createDate, status, userId, tag ";
     String SELECT_NAME = " id, " + INSERT_NAME;
 
     @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where status = 0 limit #{page}, #{offset}"})
