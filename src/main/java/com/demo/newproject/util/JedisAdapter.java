@@ -21,77 +21,47 @@ public class JedisAdapter implements InitializingBean {
         jedisPool = new JedisPool("redis://127.0.0.1:7000/10");
     }
 
-    public long srem(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+    public Long srem(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.srem(key, value);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
         }
-        return 0;
+        return 0L;
     }
 
-    public long sadd(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+    public Long sadd(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.sadd(key, value);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
         }
-        return 0;
+        return 0L;
     }
 
     public Set<String> smembers(String key) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.smembers(key);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
         }
         return null;
     }
 
-    public long scard(String key) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+    public Long scard(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.scard(key);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
         }
         return 0L;
     }
 
     public Boolean sismember(String key, String value) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedis.sismember(key, value);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
-        } finally {
-            if(jedis != null) {
-                jedis.close();
-            }
         }
         return null;
     }

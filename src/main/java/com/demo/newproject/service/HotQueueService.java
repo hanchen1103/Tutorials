@@ -19,8 +19,9 @@ public class HotQueueService {
     HotQueueDAO hotQueueDAO;
 
     public Integer publishHotQueue(HotQueue hotQueue) throws IllegalAccessException{
-        if(hotQueue.getContent().isBlank() || hotQueue.getTitle().isBlank()) {
-            throw new IllegalAccessException();
+        if(hotQueue.getTitle() == null || hotQueue.getContent() == null ||
+                hotQueue.getContent().isBlank() || hotQueue.getTitle().isBlank()) {
+            throw new NullPointerException("title or content can't be empty");
         }
         User user = userService.selectById(hotQueue.getUserId());
         if(user == null || user.getStatus() == 1) {
@@ -43,14 +44,16 @@ public class HotQueueService {
     public List<HotQueue> getOwnHotQueue(int userId) throws IllegalAccessException {
         User user = userService.selectById(userId);
         if(user == null || user.getStatus() == 1) {
-            throw new IllegalAccessException();
+            throw new IllegalArgumentException("error Argument");
         }
         return hotQueueDAO.selectOwnQueue(userId);
     }
 
     public Integer deleteHotQueue(int hotqueueId) {
         HotQueue hotQueue = hotQueueDAO.selectById(hotqueueId);
-        if(hotQueue == null || hotQueue.getStatus() != 0) return 0;
+        if(hotQueue == null || hotQueue.getStatus() != 0) {
+            throw new NullPointerException("hotqueue is null");
+        }
         return hotQueueDAO.deleteHotQueue(hotqueueId);
     }
 }

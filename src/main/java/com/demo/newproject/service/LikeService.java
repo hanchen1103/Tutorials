@@ -14,24 +14,36 @@ public class LikeService {
     @Autowired
     UserService userService;
 
-    public Long getLikeCount(int entityType, int entityId) {
+    public Long getLikeCount(Integer entityType, Integer entityId) {
+        if(entityType == null || entityId == null) {
+            throw new NullPointerException("entityType or entityId can't be null");
+        }
         String likeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
         return jedisAdapter.scard(likeKey);
     }
 
-    public Long like(int userId, int entityType, int entityId) {
+    public Long like(Integer userId, Integer entityType, Integer entityId) {
+        if(userId == null || entityType == null || entityId == null) {
+            throw new NullPointerException("userId or entityType or entityId can't be null");
+        }
         String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
         jedisAdapter.sadd(LikeKey, String.valueOf(userId));
         return jedisAdapter.scard(LikeKey);
     }
 
-    public Long disLike(int userId, int entityType, int entityId) {
+    public Long disLike(Integer userId, Integer entityType, Integer entityId) {
+        if(userId == null || entityType == null || entityId == null) {
+            throw new NullPointerException("userId or entityType or entityId can't be null");
+        }
         String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
         jedisAdapter.srem(LikeKey, String.valueOf(userId));
         return jedisAdapter.scard(LikeKey);
     }
 
-    public Boolean getLikeStatus(int userId, int entityType, int entityId) {
+    public Boolean getLikeStatus(Integer userId, Integer entityType, Integer entityId) {
+        if(userId == null || entityType == null || entityId == null) {
+            throw new NullPointerException("userId or entityType or entityId can't be null");
+        }
         String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
         return jedisAdapter.sismember(LikeKey, String.valueOf(userId));
     }
