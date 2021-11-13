@@ -27,6 +27,6 @@ public class LikeController {
         } catch (NullPointerException e) {
             logger.error(e.getMessage());
             return jsonUtil.getJSONString(500, "like error");
-        } 
+        }
     }
 }
