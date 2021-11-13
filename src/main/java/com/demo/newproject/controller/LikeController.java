@@ -24,9 +24,9 @@ public class LikeController {
         try {
             return jsonUtil.getJSONString(200, likeService.like(Integer.parseInt(map.get("userId")),
                     EntityType.HOTQUEUE, Integer.parseInt(map.get("hotqueueId"))));
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             logger.error(e.getMessage());
-            return jsonUtil.getJSONString(500, "find error");
-        }
+            return jsonUtil.getJSONString(500, "like error");
+        } 
     }
 }
