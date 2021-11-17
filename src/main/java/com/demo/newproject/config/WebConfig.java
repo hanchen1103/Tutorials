@@ -24,7 +24,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
                     .addResourceLocations("file:D://picture/");
         } else {  //linux 和mac
             registry.addResourceHandler("/image/**")
-                    .addResourceLocations("file:/Users/hanchenzhu/Pictures/img/") ;
+                    .addResourceLocations("file:/usr/local/img/") ;
         }
         super.addResourceHandlers(registry);
     }

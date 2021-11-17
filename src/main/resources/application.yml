@@ -34,7 +34,7 @@ mybatis:
 file:
   path-mac: /Users/hanchenzhu/Pictures/img/
   path-centos: /usr/local/img/
-  url-web: 110.40.192.207:8080
+  url-web: 110.40.192.207
   url-local: 127.0.0.1
   port: 8080
   suffix-mac: /image/
