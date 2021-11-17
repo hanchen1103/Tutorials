@@ -18,7 +18,7 @@ spring:
 
   redis:
     host: 127.0.0.1
-    port: 7000
+    port: 6379
     timeout: 20000
     jedis:
       pool:

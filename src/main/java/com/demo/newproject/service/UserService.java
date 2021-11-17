@@ -67,7 +67,14 @@ public class UserService {
         return userDAO.updateHead_url(head_url, id);
     }
 
-    public User selectById(int id) {
-        return userDAO.selectByuserId(id);
+    public User selectById(Integer id) {
+        if(id == null) {
+            throw new NullPointerException("userId is null");
+        }
+        User user = userDAO.selectByuserId(id);
+        if(user == null || user.getStatus() != 0) {
+            throw new NullPointerException("user is null");
+        }
+        return user;
     }
 }

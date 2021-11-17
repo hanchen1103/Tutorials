@@ -4,7 +4,6 @@ import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.jsonUtil;
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +25,19 @@ public class HotQueueController {
     @Autowired
     UserService userService;
 
-    public static final RateLimiter rateLimiter = RateLimiter.create(100);
+
+    public static final RateLimiter rateLimiter = RateLimiter.create(10);
 
 
-    @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value = "/list", produces = {"application/json;charset=UTF-8"})
     public String getHotQueue(Integer page, Integer offset) {
         try {
-            if(rateLimiter.tryAcquire(10)) {
-                String res = jsonUtil.getJSONString(200, hotQueueService.getHotQueueByOffset(page, offset));
+            if(rateLimiter.tryAcquire(1)) {
+                String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfoList(page, offset));
                 logger.info(res);
                 return res;
             }
-            logger.info("requests has been limited");
+            logger.error("requests has been limited");
         } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
             return jsonUtil.getJSONString(500, "page is illegal");
@@ -45,7 +45,7 @@ public class HotQueueController {
             logger.error(ex.getMessage());
             return jsonUtil.getJSONString(500, "page or offset can't be null");
         }
-        return jsonUtil.getJSONString(500, "error");
+        return jsonUtil.getJSONString(500, "limit");
     }
 
     @PostMapping(value = "", produces = {"application/json;charset=UTF-8"})
@@ -65,5 +65,22 @@ public class HotQueueController {
         }
         return jsonUtil.getJSONString(200);
     }
+
+    @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
+    public String getHotQueueInfo(Integer queueId) {
+        try {
+            if(rateLimiter.tryAcquire(1)) {
+                String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfo(queueId));
+                logger.info(res);
+                return res;
+            }
+            logger.error("requests has been limited");
+        } catch (NullPointerException ex) {
+            logger.error(ex.getMessage());
+            return jsonUtil.getJSONString(500, ex.getMessage());
+        }
+        return jsonUtil.getJSONString(500, "limit");
+    }
+
 
 }

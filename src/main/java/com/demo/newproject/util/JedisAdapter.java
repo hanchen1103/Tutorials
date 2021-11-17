@@ -18,7 +18,7 @@ public class JedisAdapter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        jedisPool = new JedisPool("redis://127.0.0.1:7000/10");
+        jedisPool = new JedisPool("redis://127.0.0.1:6379/10");
     }
 
     public Long srem(String key, String value) {

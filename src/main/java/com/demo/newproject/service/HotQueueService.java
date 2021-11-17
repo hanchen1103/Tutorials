@@ -1,13 +1,18 @@
 package com.demo.newproject.service;
 
+import com.demo.newproject.mapper.CommentDAO;
 import com.demo.newproject.mapper.HotQueueDAO;
+import com.demo.newproject.model.EntityType;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.model.User;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class HotQueueService {
@@ -17,6 +22,12 @@ public class HotQueueService {
 
     @Autowired
     HotQueueDAO hotQueueDAO;
+
+    @Autowired
+    CommentService commentService;
+
+    @Autowired
+    LikeService likeService;
 
     public Integer publishHotQueue(HotQueue hotQueue) throws IllegalAccessException{
         if(hotQueue.getTitle() == null || hotQueue.getContent() == null ||
@@ -49,11 +60,49 @@ public class HotQueueService {
         return hotQueueDAO.selectOwnQueue(userId);
     }
 
-    public Integer deleteHotQueue(int hotqueueId) {
+    public Integer deleteHotQueue(Integer hotqueueId) {
+        if(hotqueueId == null) {
+            throw new NullPointerException("hotqueueId is null");
+        }
         HotQueue hotQueue = hotQueueDAO.selectById(hotqueueId);
         if(hotQueue == null || hotQueue.getStatus() != 0) {
             throw new NullPointerException("hotqueue is null");
         }
         return hotQueueDAO.deleteHotQueue(hotqueueId);
+    }
+
+    public HotQueue selectById(Integer hotqueueId) {
+        if(hotqueueId == null) {
+            throw new NullPointerException("hotqueueId is null");
+        }
+        HotQueue hotQueue = hotQueueDAO.selectById(hotqueueId);
+        if(hotQueue == null || hotQueue.getStatus() != 0) {
+            throw new NullPointerException("hotqueue is null");
+        }
+        return hotQueue;
+    }
+
+    public Map<String, Object> getQueueInfo(int queueId) {
+        HotQueue hotqueue = selectById(queueId);
+        int userId = hotqueue.getUserId();
+        User user = userService.selectById(userId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("head_url", user.getHead_url());
+        map.put("userId", userId);
+        map.put("hotqueue", hotqueue);
+        map.put("commentCount", commentService.countComment(EntityType.HOTQUEUE, queueId));
+        map.put("likeStatus", likeService.getLikeStatus(userId, EntityType.HOTQUEUE, queueId));
+        map.put("likeCount", likeService.getLikeCount(EntityType.HOTQUEUE, queueId));
+        return map;
+    }
+
+    public List<Map<String, Object>> getQueueInfoList(Integer page, Integer offset) throws IllegalAccessException {
+        List<HotQueue> queueList = getHotQueueByOffset(page, offset);
+        List<Map<String, Object>> res = new LinkedList<>();
+        for(HotQueue hq : queueList) {
+            Map<String, Object> map = getQueueInfo(hq.getId());
+            res.add(map);
+        }
+        return res;
     }
 }

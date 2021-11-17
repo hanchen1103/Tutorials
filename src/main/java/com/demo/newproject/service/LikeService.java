@@ -5,6 +5,8 @@ import com.demo.newproject.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class LikeService {
 
@@ -46,5 +48,21 @@ public class LikeService {
         }
         String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
         return jedisAdapter.sismember(LikeKey, String.valueOf(userId));
+    }
+
+    public Long scard(Integer userId, Integer entityType, Integer entityId) {
+        if(userId == null || entityType == null || entityId == null) {
+            throw new NullPointerException("userId or entityType or entityId can't be null");
+        }
+        String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        return jedisAdapter.scard(LikeKey);
+    }
+
+    public Set<String> smembers(Integer userId, Integer entityType, Integer entityId) {
+        if(userId == null || entityType == null || entityId == null) {
+            throw new NullPointerException("userId or entityType or entityId can't be null");
+        }
+        String LikeKey = RedisKeyUtil.getLikeKey(entityType, entityId);
+        return jedisAdapter.smembers(LikeKey);
     }
 }
