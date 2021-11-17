@@ -16,17 +16,18 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    @Value("${file.path}")
+    @Value("${file.path-centos}")
     String filePath;
 
-    @Value("${file.url}")
+    @Value("${file.url-web}")
     String fileUrl;
 
     @Value("${file.port}")
     String filePort;
 
-    @Value("${file.suffix}")
+    @Value("${file.suffix-centos}")
     String fileSuffix;
+
 
     @Autowired
     UserService userService;
