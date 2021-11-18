@@ -5,6 +5,9 @@ import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.jsonUtil;
 import com.google.common.util.concurrent.RateLimiter;
+import com.hanchen.distrubuted.component.annotation.BaseLimiter;
+import com.hanchen.distrubuted.component.annotation.SpringRequestLimiter;
+import com.hanchen.distrubuted.component.service.DistributedLimit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ public class HotQueueController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DistributedLimit distributedLimit;
 
 
     public static final RateLimiter rateLimiter = RateLimiter.create(10);
@@ -66,20 +72,17 @@ public class HotQueueController {
         return jsonUtil.getJSONString(200);
     }
 
+    @SpringRequestLimiter
     @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
     public String getHotQueueInfo(Integer queueId) {
         try {
-            if(rateLimiter.tryAcquire(1)) {
-                String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfo(queueId));
-                logger.info(res);
-                return res;
-            }
-            logger.error("requests has been limited");
+            String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfo(queueId));
+            logger.info(res);
+            return res;
         } catch (NullPointerException ex) {
             logger.error(ex.getMessage());
             return jsonUtil.getJSONString(500, ex.getMessage());
         }
-        return jsonUtil.getJSONString(500, "limit");
     }
 
 

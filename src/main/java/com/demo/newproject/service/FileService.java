@@ -28,7 +28,6 @@ public class FileService {
     @Value("${file.suffix-centos}")
     String fileSuffix;
 
-
     @Autowired
     UserService userService;
 

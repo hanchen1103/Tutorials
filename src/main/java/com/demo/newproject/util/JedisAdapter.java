@@ -18,8 +18,9 @@ public class JedisAdapter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        jedisPool = new JedisPool("redis://127.0.0.1:6379/10");
+        jedisPool = new JedisPool("redis://127.0.0.1:6379/1");
     }
+
 
     public Long srem(String key, String value) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -66,5 +67,13 @@ public class JedisAdapter implements InitializingBean {
         return null;
     }
 
+    public String hget(String field, String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hget(field, key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
 
 }
