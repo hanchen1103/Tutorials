@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+
 import java.util.Set;
 
 @Component
@@ -70,6 +71,15 @@ public class JedisAdapter implements InitializingBean {
     public String hget(String field, String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hget(field, key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
+    public Long hset(String field, String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hset(field, key, value);
         } catch (Exception e) {
             logger.error("redis error " + e.getMessage());
         }

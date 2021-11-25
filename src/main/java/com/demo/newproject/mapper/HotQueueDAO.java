@@ -18,7 +18,7 @@ public interface HotQueueDAO {
     @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where status = 0 limit #{page}, #{offset}"})
     List<HotQueue> selectByPage(@Param("page") int page, @Param("offset") int offset);
 
-    @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where id = #{id} and status = 0"})
+    @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where id = #{id}"})
     HotQueue selectById(@Param("id") int id);
 
     @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where userId = #{userId} and status = 0 order by id desc"})
@@ -35,4 +35,7 @@ public interface HotQueueDAO {
     @Update({"update ", TABLE_NAME,
             " set content = #{content} and title = #{title} and tag = #{tag} where id = #{id}"})
     Integer updateHotqueue(HotQueue hotQueue);
+
+    @Update({"update ", TABLE_NAME, " set status = #{status} where id = #{id}"})
+    Integer TestLock(int status, int id);
 }

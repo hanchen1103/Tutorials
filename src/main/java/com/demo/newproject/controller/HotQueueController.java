@@ -1,13 +1,12 @@
 package com.demo.newproject.controller;
 
+import com.demo.newproject.mapper.HotQueueDAO;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
+import com.demo.newproject.util.JedisAdapter;
 import com.demo.newproject.util.jsonUtil;
-import com.google.common.util.concurrent.RateLimiter;
-import com.hanchen.distrubuted.component.annotation.BaseLimiter;
-import com.hanchen.distrubuted.component.annotation.SpringRequestLimiter;
-import com.hanchen.distrubuted.component.service.DistributedLimit;
+import com.hanchen.distributed.component.common.ZKDistributedLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +28,36 @@ public class HotQueueController {
     UserService userService;
 
     @Autowired
-    DistributedLimit distributedLimit;
+    HotQueueDAO hotQueueDAO;
 
+    @Autowired
+    ZKDistributedLock zkDistributedLock;
 
-    public static final RateLimiter rateLimiter = RateLimiter.create(10);
+    @Autowired
+    JedisAdapter jedisAdapter;
+
+    @GetMapping(value = "/test", produces = {"application/json;charset=UTF-8"})
+    public String getTest() {
+        zkDistributedLock.setLockValue("HotQueue-1");
+        Boolean res = null;
+        if(zkDistributedLock.getLock()) {
+            HotQueue hotQueue = hotQueueService.selectById(1);
+            int t = Integer.parseInt(jedisAdapter.hget("zktest", "queue"));
+            hotQueueDAO.TestLock(hotQueue.getStatus() + 1, hotQueue.getId());
+            jedisAdapter.hset("zktest", "queue", String.valueOf(t + 1));
+            zkDistributedLock.unLock();
+            return jsonUtil.getJSONString(200, res);
+        }
+        return jsonUtil.getJSONString(500, res);
+    }
 
 
     @GetMapping(value = "/list", produces = {"application/json;charset=UTF-8"})
     public String getHotQueue(Integer page, Integer offset) {
         try {
-            if(rateLimiter.tryAcquire(1)) {
                 String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfoList(page, offset));
                 logger.info(res);
                 return res;
-            }
-            logger.error("requests has been limited");
         } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
             return jsonUtil.getJSONString(500, "page is illegal");
@@ -51,7 +65,6 @@ public class HotQueueController {
             logger.error(ex.getMessage());
             return jsonUtil.getJSONString(500, "page or offset can't be null");
         }
-        return jsonUtil.getJSONString(500, "limit");
     }
 
     @PostMapping(value = "", produces = {"application/json;charset=UTF-8"})
@@ -72,7 +85,6 @@ public class HotQueueController {
         return jsonUtil.getJSONString(200);
     }
 
-    @SpringRequestLimiter
     @GetMapping(value = "", produces = {"application/json;charset=UTF-8"})
     public String getHotQueueInfo(Integer queueId) {
         try {

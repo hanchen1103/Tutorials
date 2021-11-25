@@ -56,10 +56,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-freemarker</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -85,11 +81,11 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>redis.clients</groupId>-->
-<!--			<artifactId>jedis</artifactId>-->
-<!--			<version>3.2.0</version>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>3.2.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
@@ -100,8 +96,8 @@
 			<version>2.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.distrubted</groupId>
-			<artifactId>component</artifactId>
+			<groupId>org.hanchen.distributed</groupId>
+			<artifactId>limit-lock</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 

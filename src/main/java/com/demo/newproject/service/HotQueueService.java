@@ -49,6 +49,7 @@ public class HotQueueService {
         if(page < 0) {
             throw new IllegalAccessException("page is illegal");
         }
+        Long endTime = System.currentTimeMillis();
         return hotQueueDAO.selectByPage(page, offset);
     }
 
@@ -76,7 +77,7 @@ public class HotQueueService {
             throw new NullPointerException("hotqueueId is null");
         }
         HotQueue hotQueue = hotQueueDAO.selectById(hotqueueId);
-        if(hotQueue == null || hotQueue.getStatus() != 0) {
+        if(hotQueue == null) {
             throw new NullPointerException("hotqueue is null");
         }
         return hotQueue;
