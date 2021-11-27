@@ -6,6 +6,7 @@ import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.JedisAdapter;
 import com.demo.newproject.util.jsonUtil;
+import com.hanchen.distributed.component.common.RSDistributedLimit;
 import com.hanchen.distributed.component.common.ZKDistributedLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,10 @@ public class HotQueueController {
     @Autowired
     JedisAdapter jedisAdapter;
 
+    @Autowired
+    RSDistributedLimit rsDistributedLimit;
+
+
     @GetMapping(value = "/test", produces = {"application/json;charset=UTF-8"})
     public String getTest() {
         zkDistributedLock.setLockValue("HotQueue-1");
@@ -55,9 +60,13 @@ public class HotQueueController {
     @GetMapping(value = "/list", produces = {"application/json;charset=UTF-8"})
     public String getHotQueue(Integer page, Integer offset) {
         try {
-                String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfoList(page, offset));
-                logger.info(res);
-                return res;
+            if(rsDistributedLimit.isLimit()) {
+                logger.error("request has been limited");
+                return jsonUtil.getJSONString(500);
+            }
+            String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfoList(page, offset));
+            logger.info(res);
+            return res;
         } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
             return jsonUtil.getJSONString(500, "page is illegal");

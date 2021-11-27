@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
+
 import redis.clients.jedis.JedisPool;
-
-
 import java.util.Set;
 
 @Component
@@ -17,9 +16,23 @@ public class JedisAdapter implements InitializingBean {
 
     private JedisPool jedisPool;
 
+//    private JedisCluster jedisCluster;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         jedisPool = new JedisPool("redis://127.0.0.1:6379/1");
+//        Set<HostAndPort> nodes = new HashSet<>();
+//        nodes.add(new HostAndPort("127.0.0.1", 6379));
+//        jedisCluster = new JedisCluster(nodes);
+    }
+
+    public Jedis getJedisConnection() {
+        try {
+            return jedisPool.getResource();
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
     }
 
 

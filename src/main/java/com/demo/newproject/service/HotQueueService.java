@@ -5,6 +5,7 @@ import com.demo.newproject.mapper.HotQueueDAO;
 import com.demo.newproject.model.EntityType;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.model.User;
+import com.hanchen.distributed.component.common.RSDistributedLimit;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class HotQueueService {
 
     @Autowired
     LikeService likeService;
+
 
     public Integer publishHotQueue(HotQueue hotQueue) throws IllegalAccessException{
         if(hotQueue.getTitle() == null || hotQueue.getContent() == null ||
