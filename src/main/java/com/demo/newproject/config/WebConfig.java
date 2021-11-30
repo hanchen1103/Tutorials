@@ -1,11 +1,15 @@
 package com.demo.newproject.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Component
 public class WebConfig extends WebMvcConfigurationSupport {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
     /**
      * 文件防止路径,鉴别操作系统，如果是windows系统则放置在D://picture/路径下
@@ -16,7 +20,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         String os = System.getProperty("os.name");
-
+        logger.info("springboot build on :" + os);
         //如果是Windows系统
         if (os.toLowerCase().startsWith("win")) {
             registry.addResourceHandler("/image/**")

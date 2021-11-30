@@ -21,9 +21,7 @@ public class jsonUtil {
     public static String getJSONString(int code, Map<String, Object> map) {
         JSONObject json = new JSONObject();
         json.put("code", code);
-        for(Map.Entry<String, Object> entry : map.entrySet()) {
-            json.put(entry.getKey(), entry.getValue());
-        }
+        json.putAll(map);
         return json.toJSONString();
     }
 

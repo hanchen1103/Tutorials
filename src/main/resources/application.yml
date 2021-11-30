@@ -5,6 +5,10 @@ spring:
     password: 123456
     url: jdbc:mysql://110.40.192.207/spring_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 
+  devtools:
+    livereload:
+      port: 35370
+
   servlet:
     multipart:
       max-file-size: 5000MB

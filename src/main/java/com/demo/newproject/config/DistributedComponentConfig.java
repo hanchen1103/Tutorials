@@ -28,7 +28,7 @@ public class DistributedComponentConfig {
     @Scope(value = "prototype")
     public RSDistributedLimit buildLimit() {
         return new RSDistributedLimit.JedisBuilder<>(jedisAdapter.getJedisConnection()).
-                maxSize(100).secondToken(5).wasteTicket(10).request("queuelist").create();
+                maxSize(200).secondToken(30).wasteTicket(1).request("queuelist").create();
     }
 
 }
