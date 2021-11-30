@@ -16,11 +16,12 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint(value = "/websocket")
+@ServerEndpoint(value = "/websocket/{userId}")
 @Component
 public class WebSocket {
 
@@ -36,22 +37,27 @@ public class WebSocket {
     
     private Integer userId;
 
-    private static ConcurrentHashMap<Integer, WebSocket> webSocketMap = new ConcurrentHashMap<>();
+    private static HashMap<Integer, WebSocket> webSocketMap = new HashMap<>();
 
     private Session session;
 
+    private static final Object obj = new Object();
+
+
     @OnOpen
     public void onOpen(Session session, @PathParam("userId") int userId) {
-        this.session = session;
-        this.userId = userId;
-        if(webSocketMap.containsKey(userId)) {
-            webSocketMap.remove(userId);
-            webSocketMap.put(userId, this);
-        } else {
-            webSocketMap.put(userId, this);
+        synchronized (obj) {
+            this.session = session;
+            this.userId = userId;
+            if(webSocketMap.containsKey(userId)) {
+                webSocketMap.remove(userId);
+                webSocketMap.put(userId, this);
+            } else {
+                webSocketMap.put(userId, this);
+                onlineCount.addAndGet(1);
+            }
+            logger.info("Welcome to connect websocket, current online num is: "+ getOnlineCount());
         }
-        onlineCount.addAndGet(1);
-        logger.info("Welcome to connect websocket, current online num is: "+ getOnlineCount());
     }
 
     @OnMessage
@@ -86,11 +92,13 @@ public class WebSocket {
 
     @OnClose
     public void onClose() {
-        if(webSocketMap.containsKey(userId)) {
-            webSocketMap.remove(userId);
-            onlineCount.decrementAndGet();
+        synchronized (obj) {
+            if(webSocketMap.containsKey(userId)) {
+                webSocketMap.remove(userId);
+                onlineCount.decrementAndGet();
+            }
+            logger.info("one connection close, currnet online num is: " + getOnlineCount());
         }
-        logger.info("one connection close, currnet online num is: " + getOnlineCount());
     }
 
     @OnError
@@ -103,7 +111,7 @@ public class WebSocket {
         this.session.getBasicRemote().sendText(message);
     }
 
-    public int getOnlineCount() {
+    public static int getOnlineCount() {
         return onlineCount.get();
     }
 
