@@ -6,6 +6,8 @@ import com.demo.newproject.model.Message;
 import com.demo.newproject.model.User;
 import com.demo.newproject.service.MessageService;
 import com.demo.newproject.service.UserService;
+import com.demo.newproject.util.JedisAdapter;
+import com.demo.newproject.util.RedisKeyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -31,6 +34,9 @@ public class WebSocket {
     @Autowired
     UserService userService;
 
+    @Autowired
+    JedisAdapter jedisAdapter;
+
     private static AtomicInteger onlineCount = new AtomicInteger(0);
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocket.class);
@@ -45,7 +51,10 @@ public class WebSocket {
 
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("userId") int userId) {
+    public void onOpen(Session session, @PathParam("userId") Integer userId) {
+        if(userId == null) {
+            return ;
+        }
         synchronized (obj) {
             this.session = session;
             this.userId = userId;
@@ -71,10 +80,12 @@ public class WebSocket {
         Message messageDto = JSONObject.toJavaObject(jsonObject, Message.class);
         Integer toId = messageDto.getToId();
         messageDto.setFromId(this.userId);
-        messageDto.setIsRead(1);
+        messageDto.setIsRead(0);
         messageDto.setStatus(0);
+        messageDto.setCreateDate(new Date());
         User toUser = userService.selectById(toId);
         User fromUser = userService.selectById(userId);
+        updateMessageHot(this.userId, toId);
         if(toUser == null || toUser.getStatus() > 0 || fromUser == null || fromUser.getStatus() > 0) {
             logger.error("User exception");
             return ;
@@ -82,12 +93,13 @@ public class WebSocket {
         try {
             if(webSocketMap.containsKey(toId)) {
                 webSocketMap.get(toId).sendMessage(jsonObject.getString(message));
+            } else {
+                messageDto.setIsRead(1);
             }
             messageService.addMessage(messageDto);
         } catch (IOException e) {
             logger.error("Sendmessage error:" + e.getMessage());
         }
-
     }
 
     @OnClose
@@ -113,6 +125,17 @@ public class WebSocket {
 
     public static int getOnlineCount() {
         return onlineCount.get();
+    }
+
+    private Long updateMessageHot(Integer fromId, Integer toId) {
+        if(fromId == null || toId == null) {
+            throw new NullPointerException();
+        }
+        String messageKey = RedisKeyUtil.getMessageKey(userId, toId);
+        if(!jedisAdapter.exists(messageKey)) {
+            jedisAdapter.setnx(messageKey, "0");
+        }
+        return jedisAdapter.incr(messageKey);
     }
 
 }

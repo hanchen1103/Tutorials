@@ -18,16 +18,19 @@ public interface MessageDAO {
     @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where id = #{id}"})
     Message selectById(@Param("id") Integer id);
 
-
     @Select({"select ", SELECT_NAME, " from ",
             TABLE_NAME, " where fromId = #{fromId} and toId = #{toId} order by createDate desc limit #{start}, #{end}"})
     List<Message> selectByFromIdAndtoId(@Param("id") Integer fromId, @Param("toId") Integer toId,
                                         @Param("start") Integer start, @Param("end") Integer end);
 
     @Insert({"insert into ", TABLE_NAME,
-            " ( ", INSERT_NAME, " ) values (#{createDate}, #{content}, #{fromId}, #{toId})"})
+            " ( ", INSERT_NAME, " ) values (#{createDate}, #{content}, #{fromId}, #{toId}, #isRead)"})
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int addMessage(Message message);
 
+    @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, "where toId != #{toId} and isRead = 1 order by id"})
+    List<Message> selectUnReadMessage(@Param("toId") Integer toId);
 
+    @Update({"update ", TABLE_NAME, " set isRead = 0 where toId = #{toId} and isRead = 1"})
+    void clearUnReadMessage(@Param("toId") Integer toId);
 }

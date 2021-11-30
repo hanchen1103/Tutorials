@@ -99,4 +99,49 @@ public class JedisAdapter implements InitializingBean {
         return null;
     }
 
+    public Long setnx(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.setnx(key, value);
+        } catch (Exception e) {
+        logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
+    public Long incr(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.incr(key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
+    public Boolean exists(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.exists(key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
+    public String get(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
+    public Long del(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.del(key);
+        } catch (Exception e) {
+            logger.error("redis error " + e.getMessage());
+        }
+        return null;
+    }
+
 }
