@@ -33,4 +33,5 @@ public interface MessageDAO {
 
     @Update({"update ", TABLE_NAME, " set isRead = 0 where toId = #{toId} and isRead = 1"})
     void clearUnReadMessage(@Param("toId") Integer toId);
+
 }
