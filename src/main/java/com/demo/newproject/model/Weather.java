@@ -2,8 +2,12 @@ package com.demo.newproject.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Weather {
+public class Weather implements Serializable {
+
+    private static final long serialVersionUID = -3531968489672458808L;
 
     /**
      * 湿度

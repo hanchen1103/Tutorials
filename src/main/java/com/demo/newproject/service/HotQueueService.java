@@ -1,13 +1,13 @@
 package com.demo.newproject.service;
 
-import com.demo.newproject.mapper.CommentDAO;
 import com.demo.newproject.mapper.HotQueueDAO;
 import com.demo.newproject.model.EntityType;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.model.User;
-import com.hanchen.distributed.component.common.RSDistributedLimit;
-import org.apache.ibatis.annotations.Select;
+import com.demo.newproject.repository.HotQueueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -30,6 +30,11 @@ public class HotQueueService {
     @Autowired
     LikeService likeService;
 
+    @Autowired
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Autowired
+    HotQueueRepository hotQueueRepository;
 
     public Integer publishHotQueue(HotQueue hotQueue) throws IllegalAccessException{
         if(hotQueue.getTitle() == null || hotQueue.getContent() == null ||
@@ -40,6 +45,7 @@ public class HotQueueService {
         if(user == null || user.getStatus() == 1) {
             throw new IllegalAccessException();
         }
+        hotQueueRepository.save(hotQueue);
         return hotQueueDAO.addHotQueue(hotQueue);
     }
 
