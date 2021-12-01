@@ -8,6 +8,7 @@ import com.demo.newproject.service.MessageService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.JedisAdapter;
 import com.demo.newproject.util.RedisKeyUtil;
+import com.demo.newproject.util.jsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,12 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint(value = "/websocket/{userId}")
+@ServerEndpoint(value = "/websocket/{userId}", configurator = CustomSpringConfigurator.class)
 @Component
 public class WebSocket {
 
@@ -66,6 +68,15 @@ public class WebSocket {
                 onlineCount.addAndGet(1);
             }
             logger.info("Welcome to connect websocket, current online num is: "+ getOnlineCount());
+            List<Message> list = messageService.selectUnRead(this.userId);
+            try {
+                WebSocket webSocket = webSocketMap.get(this.userId);
+                for(Message message : list) {
+                    webSocket.sendMessage(message.getContent());
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
         }
     }
 
@@ -92,7 +103,7 @@ public class WebSocket {
         }
         try {
             if(webSocketMap.containsKey(toId)) {
-                webSocketMap.get(toId).sendMessage(jsonObject.getString(message));
+                webSocketMap.get(toId).sendMessage(message);
             } else {
                 messageDto.setIsRead(1);
             }

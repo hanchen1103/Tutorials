@@ -50,5 +50,12 @@ public class MessageService {
         return jedisAdapter.get(RedisKeyUtil.getMessageKey(fromId, toId));
     }
 
+    public List<Message> selectUnRead(Integer toId) {
+        if(toId == null) {
+            throw new NullPointerException();
+        }
+        return messageDAO.selectUnReadMessage(toId);
+    }
+
 
 }
