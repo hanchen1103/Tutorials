@@ -5,9 +5,14 @@ import com.demo.newproject.model.EntityType;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.model.User;
 import com.demo.newproject.repository.HotQueueRepository;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -57,7 +62,6 @@ public class HotQueueService {
         if(page < 0) {
             throw new IllegalAccessException("page is illegal");
         }
-        Long endTime = System.currentTimeMillis();
         return hotQueueDAO.selectByPage(page, offset);
     }
 
@@ -109,9 +113,18 @@ public class HotQueueService {
         List<HotQueue> queueList = getHotQueueByOffset(page, offset);
         List<Map<String, Object>> res = new LinkedList<>();
         for(HotQueue hq : queueList) {
-            Map<String, Object> map = getQueueInfo(hq.getId());
+            Map<String, Object> map = getQueueInfo(Integer.parseInt(hq.getId()));
             res.add(map);
         }
         return res;
     }
+
+//    public List<HotQueue> searchHotqueue(String q, Integer page, Integer offset) throws IllegalAccessException {
+//        if(q == null || q.isEmpty() || page == null || offset == null) {
+//            throw new IllegalAccessException("param error");
+//        }
+//        Criteria criteria = new Criteria("content").is(q);
+//        Query query = new CriteriaQuery(criteria);
+//        SearchHits<>
+//    }
 }

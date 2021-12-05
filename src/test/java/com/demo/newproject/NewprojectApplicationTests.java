@@ -1,42 +1,42 @@
 package com.demo.newproject;
 
 
-import com.demo.newproject.mapper.HotQueueDAO;
 import com.demo.newproject.model.HotQueue;
-import com.demo.newproject.service.HotQueueService;
-import com.demo.newproject.util.JedisAdapter;
-import com.hanchen.distributed.component.common.ZKDistributedLock;
-import lombok.SneakyThrows;
-import org.checkerframework.checker.units.qual.C;
+import com.demo.newproject.repository.HotQueueRepository;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.commands.JedisCommands;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.*;
 
-import java.util.concurrent.CountDownLatch;
+import java.awt.print.Pageable;
+import java.util.List;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class NewprojectApplicationTests {
 
     @Autowired
-    ZKDistributedLock zkDistributedLock;
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @Autowired
-    HotQueueService hotQueueService;
+    ElasticsearchOperations elasticsearchOperations;
 
     @Autowired
-    HotQueueDAO hotQueueDAO;
-
-    @Autowired
-    JedisAdapter jedisAdapter;
-
+    HotQueueRepository hotQueueRepository;
 
     @Test
-    public void testLock() throws InterruptedException {
-
+    public void testLock() {
+        List<HotQueue> list = hotQueueRepository.findByContent("invitation", PageRequest.of(0, 10));
+        for(HotQueue i : list) {
+            System.out.println(i.toString());
+        }
     }
-
 }

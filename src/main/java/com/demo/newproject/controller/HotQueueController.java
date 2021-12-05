@@ -6,13 +6,10 @@ import com.demo.newproject.service.HotQueueService;
 import com.demo.newproject.service.UserService;
 import com.demo.newproject.util.JedisAdapter;
 import com.demo.newproject.util.jsonUtil;
-import com.hanchen.distributed.component.common.RSDistributedLimit;
-import com.hanchen.distributed.component.common.ZKDistributedLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Date;
 import java.util.Map;
 
@@ -31,39 +28,39 @@ public class HotQueueController {
     @Autowired
     HotQueueDAO hotQueueDAO;
 
-    @Autowired
-    ZKDistributedLock zkDistributedLock;
+//    @Autowired
+//    ZKDistributedLock zkDistributedLock;
 
     @Autowired
     JedisAdapter jedisAdapter;
 
-    @Autowired
-    RSDistributedLimit rsDistributedLimit;
+//    @Autowired
+//    RSDistributedLimit rsDistributedLimit;
 
 
     @GetMapping(value = "/test", produces = {"application/json;charset=UTF-8"})
     public String getTest() {
-        zkDistributedLock.setLockValue("HotQueue-1");
+        //zkDistributedLock.setLockValue("HotQueue-1");
         Boolean res = null;
-        if(zkDistributedLock.getLock()) {
+        //if(zkDistributedLock.getLock()) {
             HotQueue hotQueue = hotQueueService.selectById(1);
             int t = Integer.parseInt(jedisAdapter.hget("zktest", "queue"));
-            hotQueueDAO.TestLock(hotQueue.getStatus() + 1, hotQueue.getId());
+            hotQueueDAO.TestLock(hotQueue.getStatus() + 1, Integer.parseInt(hotQueue.getId()));
             jedisAdapter.hset("zktest", "queue", String.valueOf(t + 1));
-            zkDistributedLock.unLock();
+            //zkDistributedLock.unLock();
             return jsonUtil.getJSONString(200, res);
-        }
-        return jsonUtil.getJSONString(500, res);
+//        }
+//        return jsonUtil.getJSONString(500, res);
     }
 
 
     @GetMapping(value = "/list", produces = {"application/json;charset=UTF-8"})
     public String getHotQueue(Integer page, Integer offset) {
         try {
-            if(rsDistributedLimit.isLimit()) {
-                logger.error("request has been limited");
-                return jsonUtil.getJSONString(500);
-            }
+//            if(rsDistributedLimit.isLimit()) {
+//                logger.error("request has been limited");
+//                return jsonUtil.getJSONString(500);
+//            }
             String res = jsonUtil.getJSONString(200, hotQueueService.getQueueInfoList(page, offset));
             logger.info(res);
             return res;

@@ -1,21 +1,22 @@
 package com.demo.newproject.repository;
 
 import com.demo.newproject.model.HotQueue;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.springframework.data.elasticsearch.annotations.Highlight;
-import org.springframework.data.elasticsearch.annotations.HighlightField;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Component;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 /**
  * elasticsearch query user
  */
-public interface HotQueueRepository extends ElasticsearchRepository<HotQueue, String> {
+@Component
+public interface HotQueueRepository extends ElasticsearchRepository<HotQueue, Integer> {
 
-    List<HotQueue> findByContentOrTitle(String content, String title);
+    @Query("{\"match\": {\"content\": {\"query\": \"?0\"}}}")
+    List<HotQueue> findByContent(String content, PageRequest pageRequest);
 
 
 }
