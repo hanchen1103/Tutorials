@@ -4,7 +4,6 @@ import com.demo.newproject.mapper.HotQueueDAO;
 import com.demo.newproject.model.EntityType;
 import com.demo.newproject.model.HotQueue;
 import com.demo.newproject.model.User;
-import com.demo.newproject.repository.HotQueueRepository;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,8 +37,8 @@ public class HotQueueService {
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    @Autowired
-    HotQueueRepository hotQueueRepository;
+//    @Autowired
+//    HotQueueRepository hotQueueRepository;
 
     public Integer publishHotQueue(HotQueue hotQueue) throws IllegalAccessException{
         if(hotQueue.getTitle() == null || hotQueue.getContent() == null ||
@@ -50,8 +49,9 @@ public class HotQueueService {
         if(user == null || user.getStatus() == 1) {
             throw new IllegalAccessException();
         }
-        hotQueueRepository.save(hotQueue);
-        return hotQueueDAO.addHotQueue(hotQueue);
+        hotQueueDAO.addHotQueue(hotQueue);
+        elasticsearchRestTemplate.save(hotQueue);
+        return hotQueue.getId();
     }
 
     public List<HotQueue> getHotQueueByOffset(Integer page, Integer offset) throws IllegalAccessException {
@@ -113,7 +113,7 @@ public class HotQueueService {
         List<HotQueue> queueList = getHotQueueByOffset(page, offset);
         List<Map<String, Object>> res = new LinkedList<>();
         for(HotQueue hq : queueList) {
-            Map<String, Object> map = getQueueInfo(Integer.parseInt(hq.getId()));
+            Map<String, Object> map = getQueueInfo(hq.getId());
             res.add(map);
         }
         return res;

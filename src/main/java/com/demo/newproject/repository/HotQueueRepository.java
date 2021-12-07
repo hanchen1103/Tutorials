@@ -10,13 +10,12 @@ import java.awt.print.Pageable;
 import java.util.List;
 
 /**
- * elasticsearch query user
+ * elasticsearch query
  */
 @Component
-public interface HotQueueRepository extends ElasticsearchRepository<HotQueue, Integer> {
+public interface HotQueueRepository extends ElasticsearchRepository<HotQueue, String> {
 
     @Query("{\"match\": {\"content\": {\"query\": \"?0\"}}}")
-    List<HotQueue> findByContent(String content, PageRequest pageRequest);
-
+    List<HotQueue> findByContentAndTitle(String content, String title, PageRequest pageRequest);
 
 }

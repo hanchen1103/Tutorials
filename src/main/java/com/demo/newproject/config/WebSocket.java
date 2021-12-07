@@ -19,9 +19,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,6 +36,7 @@ public class WebSocket {
 
     @Autowired
     JedisAdapter jedisAdapter;
+
 
     private static AtomicInteger onlineCount = new AtomicInteger(0);
 
@@ -71,9 +70,17 @@ public class WebSocket {
             List<Message> list = messageService.selectUnRead(this.userId);
             try {
                 WebSocket webSocket = webSocketMap.get(this.userId);
+                List<Map<String, Object>> unReadList = new ArrayList<>();
                 for(Message message : list) {
-                    webSocket.sendMessage(message.getContent());
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("message", message);
+                    Integer fromId = message.getFromId();
+                    User user = userService.selectById(fromId);
+                    map.put("head_url", user.getHead_url());
+                    map.put("name", user.getAccount());
+                    unReadList.add(map);
                 }
+                webSocket.sendMessage(jsonUtil.getJSONString(0, unReadList));
             } catch (IOException e) {
                 logger.error(e.getMessage());
             }

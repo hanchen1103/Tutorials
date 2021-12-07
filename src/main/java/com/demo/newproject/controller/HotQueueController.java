@@ -45,7 +45,7 @@ public class HotQueueController {
         //if(zkDistributedLock.getLock()) {
             HotQueue hotQueue = hotQueueService.selectById(1);
             int t = Integer.parseInt(jedisAdapter.hget("zktest", "queue"));
-            hotQueueDAO.TestLock(hotQueue.getStatus() + 1, Integer.parseInt(hotQueue.getId()));
+            hotQueueDAO.TestLock(hotQueue.getStatus() + 1, hotQueue.getId());
             jedisAdapter.hset("zktest", "queue", String.valueOf(t + 1));
             //zkDistributedLock.unLock();
             return jsonUtil.getJSONString(200, res);

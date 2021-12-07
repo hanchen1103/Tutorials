@@ -19,7 +19,7 @@ public class HotQueue implements Serializable {
     private static final long serialVersionUID = 2522257187022327906L;
 
     @Id
-    private String id;
+    private int id;
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String content;
@@ -40,4 +40,5 @@ public class HotQueue implements Serializable {
 
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String tag;
+
 }

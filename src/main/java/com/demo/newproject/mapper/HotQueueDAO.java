@@ -24,10 +24,10 @@ public interface HotQueueDAO {
     @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where userId = #{userId} and status = 0 order by id desc"})
     List<HotQueue> selectOwnQueue(int userId);
 
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "hotqueue.id")
     @Insert({"insert into ", TABLE_NAME, "( ", INSERT_NAME,
             " ) values (#{content},#{title},#{createDate},#{status},#{userId},#{tag})"})
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    Integer addHotQueue(HotQueue hotqueue);
+    int addHotQueue(HotQueue hotqueue);
 
     @Update({"update ", TABLE_NAME, " set status = 1 where id = #{id}"})
     Integer deleteHotQueue(int id);

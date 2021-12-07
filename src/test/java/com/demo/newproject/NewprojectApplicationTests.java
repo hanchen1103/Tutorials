@@ -34,9 +34,9 @@ class NewprojectApplicationTests {
 
     @Test
     public void testLock() {
-        List<HotQueue> list = hotQueueRepository.findByContent("invitation", PageRequest.of(0, 10));
-        for(HotQueue i : list) {
-            System.out.println(i.toString());
-        }
+//        List<HotQueue> list = hotQueueRepository.findByContent("hello", PageRequest.of(0, 10));
+//        for(HotQueue i : list) {
+//            System.out.println(i.toString());
+//        }
     }
 }
