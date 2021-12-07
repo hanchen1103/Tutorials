@@ -57,5 +57,12 @@ public class MessageService {
         return messageDAO.selectUnReadMessage(toId);
     }
 
+    public Integer clearUnRead(Integer toId) {
+        if(toId == null) {
+            throw new NullPointerException();
+        }
+        return messageDAO.clearUnReadMessage(toId);
+    }
+
 
 }

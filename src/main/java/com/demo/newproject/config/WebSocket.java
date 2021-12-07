@@ -66,10 +66,9 @@ public class WebSocket {
                 webSocketMap.put(userId, this);
                 onlineCount.addAndGet(1);
             }
-            logger.info("Welcome to connect websocket, current online num is: "+ getOnlineCount());
+            logger.info("Welcome to connect websocket, user: " + this.userId + " current online num is: "+ getOnlineCount());
             List<Message> list = messageService.selectUnRead(this.userId);
             try {
-                WebSocket webSocket = webSocketMap.get(this.userId);
                 List<Map<String, Object>> unReadList = new ArrayList<>();
                 for(Message message : list) {
                     Map<String, Object> map = new HashMap<>();
@@ -80,7 +79,10 @@ public class WebSocket {
                     map.put("name", user.getAccount());
                     unReadList.add(map);
                 }
-                webSocket.sendMessage(jsonUtil.getJSONString(0, unReadList));
+                String mes = jsonUtil.getJSONString(0, unReadList);
+                logger.info(mes);
+                webSocketMap.get(this.userId).sendMessage(mes);
+                messageService.clearUnRead(this.userId);
             } catch (IOException e) {
                 logger.error(e.getMessage());
             }
@@ -127,7 +129,7 @@ public class WebSocket {
                 webSocketMap.remove(userId);
                 onlineCount.decrementAndGet();
             }
-            logger.info("one connection close, currnet online num is: " + getOnlineCount());
+            logger.info("one connection close currnet online num is: " + getOnlineCount());
         }
     }
 
