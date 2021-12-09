@@ -2,13 +2,16 @@ package com.demo.newproject.service;
 
 import com.demo.newproject.mapper.MessageDAO;
 import com.demo.newproject.model.Message;
+import com.demo.newproject.model.User;
 import com.demo.newproject.util.JedisAdapter;
 import com.demo.newproject.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessageService {
@@ -18,6 +21,9 @@ public class MessageService {
 
     @Autowired
     JedisAdapter jedisAdapter;
+
+    @Autowired
+    UserService userService;
 
     public Integer addMessage(Message message){
         if(message == null) {
@@ -62,6 +68,24 @@ public class MessageService {
             throw new NullPointerException();
         }
         return messageDAO.clearUnReadMessage(toId);
+    }
+
+    public Map<String, Object> selectByFromIdAnd2Id(Integer fromId, Integer toId) throws IllegalAccessException {
+        if(fromId == null || toId == null) {
+            throw new NullPointerException();
+        }
+        User fromUser = userService.selectById(fromId);
+        User toUser = userService.selectById(toId);
+        if(fromUser == null || toUser == null || fromUser.getStatus() > 0 || toUser.getStatus() > 0) {
+            throw new IllegalAccessException("user exception");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("fromHeadUrl", fromUser.getHead_url());
+        map.put("fromName", fromUser.getAccount());
+        map.put("toHeadUrl", toUser.getHead_url());
+        map.put("toName", toUser.getAccount());
+        map.put("messageList", messageDAO.selectByFromIdAndToId(fromId, toId));
+        return map;
     }
 
 

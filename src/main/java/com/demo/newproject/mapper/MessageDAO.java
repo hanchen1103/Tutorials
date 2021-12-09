@@ -34,4 +34,7 @@ public interface MessageDAO {
     @Update({"update ", TABLE_NAME, " set isRead = 0 where toId = #{toId} and isRead = 1"})
     Integer clearUnReadMessage(@Param("toId") Integer toId);
 
+    @Select({"select ", SELECT_NAME, " from ", TABLE_NAME, " where fromId = #{fromId} and toId = #{toId} order by id"})
+    List<Message> selectByFromIdAndToId(@Param("fromId") Integer fromId,@Param("toId") Integer toId);
+
 }

@@ -31,6 +31,7 @@ spring:
         max-wait: -1ms
         min-idle: 0
 
+
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
   type-aliases-package: com.demo.newproject.model
@@ -38,7 +39,7 @@ mybatis:
 file:
   path-mac: /Users/hanchenzhu/Pictures/img/
   path-centos: /usr/local/img/
-  url-web: 110.40.192.207
+  url-web: 42.192.54.187
   url-local: 127.0.0.1
   port: 8080
   suffix-mac: /image/
