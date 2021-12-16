@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -52,7 +53,7 @@ public class UserService {
             return map;
         }
         User user = userDAO.selectByUserAccount(account);
-        if(!newProjectUtil.MD5(password + user.getSalt()).equals(user.getPassword())) {
+        if(!Objects.equals(newProjectUtil.MD5(password + user.getSalt()), user.getPassword())) {
             map.put("msg", "密码错误");
             return map;
         }
